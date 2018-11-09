@@ -2,8 +2,8 @@
 
 namespace Fnash\GraphqlOnRestBundle\GraphQL\TypeResolver;
 
-use Fnash\GraphqlOnRestBundle\GraphQL\DataProvider\DataProviderInterface;
 use Fnash\GraphqlOnRestBundle\GraphQL\DataLoader\IriDataLoader;
+use Fnash\GraphqlOnRestBundle\GraphQL\DataProvider\DataProviderInterface;
 use Fnash\GraphqlOnRestBundle\GraphQL\Type\JsonLdObjectType;
 use GraphQL\Deferred;
 use GraphQL\Type\Definition\ResolveInfo;
@@ -48,7 +48,7 @@ abstract class TypeResolver implements TypeResolverInterface
      * TypeResolver constructor.
      *
      * @param DataProviderInterface $dataProvider
-     * @param IriDataLoader  $iriDataLoader
+     * @param IriDataLoader         $iriDataLoader
      */
     public function __construct(DataProviderInterface $dataProvider, IriDataLoader $iriDataLoader)
     {
@@ -144,13 +144,13 @@ abstract class TypeResolver implements TypeResolverInterface
      *
      * @return int
      */
-    private function getDepthFromPath(array $path)
+    protected function getDepthFromPath(array $path)
     {
         $fieldNameDepth = -1;
 
         foreach ($path as $pathElement) {
             if (is_string($pathElement)) {
-                $fieldNameDepth++;
+                ++$fieldNameDepth;
             }
         }
 
@@ -165,7 +165,6 @@ abstract class TypeResolver implements TypeResolverInterface
     protected function resolveIriDeferredClosure()
     {
         return function ($source, $args, $context, ResolveInfo $info) {
-
             $fieldNameDepth = $this->getDepthFromPath($info->path);
 
             // resolve null value
@@ -173,41 +172,22 @@ abstract class TypeResolver implements TypeResolverInterface
                 return;
             }
 
-            // resolve only one IRI
-            if (is_string($source[$info->fieldName])) {
-                $iri = $source[$info->fieldName];
+            $graphqlContext = [
+                'path' => implode('.', $info->path),
+                'depth' => $fieldNameDepth,
+            ];
 
-                $data = $this->iriDataLoader->get($iri);
-                if (null !== $data) {
-                    return $data;
-                }
-
-                $this->iriDataLoader->buffer($iri, $fieldNameDepth);
-            }
-
-            // resolve array of IRIs
-            if (is_array($source[$info->fieldName])) {
-                foreach ($source[$info->fieldName] as $iri) {
-                    $this->iriDataLoader->buffer($iri, $fieldNameDepth);
-                }
-            }
-
-            return new Deferred(function () use ($source, $info) {
-                $this->iriDataLoader->loadBuffered();
-
+            return new Deferred(function () use ($source, $info, $graphqlContext) {
+                // resolve only one IRI
                 if (is_string($source[$info->fieldName])) {
                     $iri = $source[$info->fieldName];
 
-                    return $this->iriDataLoader->get($iri);
+                    return $this->dataProvider->getIri($iri, $graphqlContext);
                 }
 
+                // resolve array of IRIs
                 if (is_array($source[$info->fieldName])) {
-                    $data = [];
-                    foreach ($source[$info->fieldName] as $iri) {
-                        $data[] = $this->iriDataLoader->get($iri);
-                    }
-
-                    return $data;
+                    return $this->dataProvider->getIris($source[$info->fieldName], $graphqlContext);
                 }
             });
         };

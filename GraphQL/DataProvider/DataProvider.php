@@ -10,6 +10,11 @@ abstract class DataProvider implements DataProviderInterface
     protected $resourceCollectionFieldName = 'hydra:member';
 
     /**
+     * @var string
+     */
+    protected $totalItemsFieldName = 'hydra:totalItems';
+
+    /**
      * @param string $resourceCollectionFieldName
      *
      * @return DataProvider
@@ -22,12 +27,40 @@ abstract class DataProvider implements DataProviderInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
+     */
+    public function getResourceCollectionFieldName(): string
+    {
+        return $this->resourceCollectionFieldName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTotalItemsFieldName(): string
+    {
+        return $this->totalItemsFieldName;
+    }
+
+    /**
+     * @param string $totalItemsFieldName
+     *
+     * @return DataProvider
+     */
+    public function setTotalItemsFieldName(string $totalItemsFieldName): DataProvider
+    {
+        $this->totalItemsFieldName = $totalItemsFieldName;
+
+        return $this;
+    }
+
+    /**
+     * @{inheritdoc]
      */
     abstract public function getRawData(string $url, array $queryParams = []): array;
 
     /**
-     * {@inheritdoc}
+     * @{inheritdoc]
      */
     public function getResourceCollection(string $url, array $queryParams = []): array
     {

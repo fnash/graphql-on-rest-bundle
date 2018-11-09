@@ -6,13 +6,13 @@ use Fnash\GraphqlOnRestBundle\DataCollector\OperationCollector;
 use Fnash\GraphqlOnRestBundle\GraphQL\TypeResolver\ListTypeResolverFactory;
 use Fnash\GraphqlOnRestBundle\GraphQL\TypeResolver\TypeResolver;
 use Fnash\GraphqlOnRestBundle\GraphQL\TypeResolver\TypeResolverInterface;
+use GraphQL\Error\InvariantViolation;
 use GraphQL\GraphQL;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Schema;
 use GraphQL\Utils\SchemaPrinter;
 use GraphQL\Validator\Rules;
 use Symfony\Component\Stopwatch\Stopwatch;
-use GraphQL\Error\InvariantViolation;
 
 /**
  * Class GraphQLClient.
@@ -34,6 +34,11 @@ class GraphQLClient
      */
     private $OperationCollector;
 
+    /**
+     * @var Schema
+     */
+    private $schema;
+
     public function __construct($debug = false, OperationCollector $OperationCollector = null, $guzzleCollector = null)
     {
         $this->debug = (bool) $debug;
@@ -53,7 +58,7 @@ class GraphQLClient
 
     /**
      * @param TypeResolverInterface $typeResolver
-     * @param string $key
+     * @param string                $key
      *
      * @return GraphQLClient
      */
@@ -66,7 +71,7 @@ class GraphQLClient
 
     /**
      * @param ListTypeResolverFactory $listTypeResolverFactory
-     * @param string $key
+     * @param string                  $key
      *
      * @return GraphQLClient
      */
@@ -160,6 +165,10 @@ class GraphQLClient
      */
     public function buildSchema()
     {
+        if ($this->schema) {
+            return $this->schema;
+        }
+
         $fields = [];
 
         foreach ($this->queryTypeResolvers as $key => $queryTypeResolvers) {
@@ -177,20 +186,20 @@ class GraphQLClient
             'fields' => $fields,
         ]);
 
-        $schema = new Schema([
+        $this->schema = new Schema([
             'query' => $queryType,
             'types' => [],
         ]);
 
         if (!$this->debug) {
             try {
-                $schema->assertValid();
+                $this->schema->assertValid();
             } catch (InvariantViolation $e) {
                 throw $e;
             }
         }
 
-        return $schema;
+        return $this->schema;
     }
 
     /**

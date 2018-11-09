@@ -65,6 +65,14 @@ class FnashGraphqlOnRestExtension extends Extension
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getAlias()
+    {
+        return 'api_platform_graphql_client';
+    }
+
+    /**
      * @param array $configuration
      * @param ContainerBuilder $container
      *
