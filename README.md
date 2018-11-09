@@ -1,8 +1,8 @@
 # GraphqlOnRestBundle
-Build a GraphQL API to automate HTTP calls.
+Main goal: Write a graphQL query, it will navigate your (Rest + JSON-LD) server and do the HTTP calls for you.
 
-This is a Symfony bundle based on top of webonyx/graphql-php.
-It lets you build a GraphQL layer for an API Platform based server (JSON-LD + REST)
+This Symfony bundle lets you build a GraphQL layer to automate HTTP calls to an API Platform based server (JSON-LD + REST).
+It is built on top of webonyx/graphql-php.
 
 Includes
 ============
@@ -14,8 +14,6 @@ $ bin/console graphql_on_rest:schema:validate
 ```
 
 - Data profiler to dump GraphQL queries et HTTP requests
-
-
 
 
 Installation
@@ -37,15 +35,17 @@ Register in the Kernel
 
     // app/AppKernel.php
 
+    use Symfony\Component\HttpKernel\Kernel;
+
     class AppKernel extends Kernel
     {
         public function registerBundles()
         {
-            $bundles = array(
+            $bundles = [
                 // ...
 
                 new Fnash\GraphqlOnRestBundle\FnashGraphqlOnRestBundle(),
-            );
+            ];
 
             // ...
         }
@@ -115,7 +115,7 @@ class MyDataProvider extends DataProvider
 Build your GraphQL Schema
 ----------------------------------
 
-Define your types for your queries:
+1- Define types for your queries:
 
 ```php
 <?php
@@ -181,7 +181,7 @@ class TagType extends JsonLdObjectType
 
 ```
 
-Create resolvers to fetch your data:
+2- Create resolvers for your types to fetch data:
 
 ```php
 namespace Acme\AppBundle\GraphQL\Resolver;
@@ -265,6 +265,8 @@ class TagTypeResolver extends TypeResolver
 }
 
 ```
+
+- Resolvers must be declared as services and tagged
 
 ```yaml
 services:
