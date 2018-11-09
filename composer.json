@@ -1,0 +1,30 @@
+{
+  "name": "fnash/graphql-on-rest-bundle",
+  "type": "symfony-bundle",
+  "description": "Build a GraphQL layer for API Platform server (REST + JSON-LD)",
+  "keywords": ["rest", "graphql", "api-platform"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Fayez Naccache",
+      "email": "fayez.naccache@gmail.com"
+    }
+  ],
+  "autoload":{
+    "files": ["deprecated.php"],
+    "psr-4":{
+      "Fnash\\GraphqlOnRestBundle\\": ""
+    }
+  },
+  "require": {
+    "php": ">=7",
+    "symfony/config": "^3.0",
+    "symfony/console": "^3.0",
+    "symfony/dependency-injection": "^3.0",
+    "symfony/framework-bundle": "^3.0",
+    "symfony/http-foundation": "^3.0",
+    "symfony/http-kernel": "^3.0",
+    "symfony/stopwatch": "^3.0",
+    "webonyx/graphql-php": "^v0.11"
+  }
+}
