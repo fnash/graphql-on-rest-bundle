@@ -23,7 +23,7 @@ Download the bundle
 ----------------
 
 ```bash
-    $ composer require fnash/graphql_on_rest-bundle
+    $ composer require fnash/graphql-on-rest-bundle
 ```
 
 Register in the Kernel
