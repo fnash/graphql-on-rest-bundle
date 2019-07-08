@@ -108,12 +108,37 @@ class MyDataProvider extends DataProvider
         } catch (\Exception $exception) {
             return [];
         }
+        
+        //TODO fill example with symfony/http-client and json_decode (without serializer)
     }
+    
+    /**
+     * @param string $iri
+     *
+     * @return array
+     */
+    public function getIri(string $iri, $context = null): array
+    {
+        // TODO: Implement getIri() method.
+    }
+
+    /**
+     * @param array $iris
+     *
+     * @return array[]
+     */
+    public function getIris(array $iris, $context = null): array
+    {
+        // TODO: Implement getIris() method.
+    }   
 }
 ```
 
 Build your GraphQL Schema
 ----------------------------------
+
+Make sure webonyx/graphql-php is installed
+
 
 1- Define types for your queries:
 
@@ -209,7 +234,7 @@ class ArticleTypeResolver extends TypeResolver
 
         return [
             'type' => Type::listOf($type),
-            'resolve' => $this->resolveTypeClosure($this->getEndpoint()),
+            'resolve' => $this->resolveTypeClosure($this->getUrlPath()),
             'args' => $this->getArgumentsConfig(),
         ];
     }
@@ -249,7 +274,7 @@ class TagTypeResolver extends TypeResolver
 
         return [
             'type' => Type::listOf($type),
-            'resolve' => $this->resolveTypeClosure($this->getEndpoint()),
+            'resolve' => $this->resolveTypeClosure($this->getUrlPath()),
             'args' => $this->getArgumentsConfig(),
         ];
     }
@@ -388,3 +413,7 @@ Result:
   }
 }
 ```
+
+TODO
+============
+- update webonyx version
