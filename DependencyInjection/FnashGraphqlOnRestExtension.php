@@ -59,17 +59,10 @@ class FnashGraphqlOnRestExtension extends Extension
             ]);
         }
 
+        $container->setParameter('graphql_on_rest.servers', array_keys($configuration['servers']));
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAlias()
-    {
-        return 'api_platform_graphql_client';
     }
 
     /**

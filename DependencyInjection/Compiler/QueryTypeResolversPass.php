@@ -23,13 +23,24 @@ class QueryTypeResolversPass implements CompilerPassInterface
 
         $graphqlClientDefinition = $container->getDefinition(GraphQLClient::class);
 
+        $servers = $container->getParameter('graphql_on_rest.servers');
+
         foreach ($typeResolvers as $id => $tags) {
             $tag = array_pop($tags);
-            if (!isset($tag['server'])) {
-                throw new RuntimeException(sprintf('The tag "graphql_on_rest.type_resolver" on the service "%s" must have attribute "server"', $id));
-            }
+            if (isset($tag['server'])) {
+                if (!in_array($tag['server'], $servers)) {
+                    throw new RuntimeException(sprintf('The attribute "server" of the tag "graphql_on_rest.type_resolver" (service "%s") must be in [ %s ]', $id, implode(', ', $servers)));
+                } else {
+                    $serverKey = $tag['server'];
+                }
 
-            $serverKey = $tag['server'];
+            }  else {
+                if (count($servers) === 1) {
+                    $serverKey = $servers[0];
+                } else {
+                    throw new RuntimeException(sprintf('The tag "graphql_on_rest.type_resolver" on the service "%s" must have attribute "server"', $id));
+                }
+            }
 
             $serviceClass = $container->findDefinition($id)->getClass();
 
