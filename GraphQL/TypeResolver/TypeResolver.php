@@ -80,21 +80,21 @@ abstract class TypeResolver implements TypeResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function getEndpoint(): string
+    public function getUrlPath(): string
     {
-        return $this->getName().'s';
+        return sprintf('/%ss', $this->getName());
     }
 
     /**
      * Resolve a Type.
      *
-     * @param string $endpoint
+     * @param string $urlPath
      *
      * @return \Closure
      */
-    public function resolveTypeClosure(string $endpoint, bool $rawResponse = false)
+    public function resolveTypeClosure(string $urlPath, bool $rawResponse = false)
     {
-        return function ($source, $args, $context, ResolveInfo $info) use ($endpoint, $rawResponse) {
+        return function ($source, $args, $context, ResolveInfo $info) use ($urlPath, $rawResponse) {
             $parameters = [];
 
             foreach ($args as $argName => $argValue) {
@@ -109,11 +109,10 @@ abstract class TypeResolver implements TypeResolverInterface
             if (is_array($context) && isset($context['extra_parameters'])) {
                 $parameters = array_merge($parameters, $context['extra_parameters']);
             }
-            //TODO replace the endpoint by a URL path
 
             return ($rawResponse)
-                ? $this->dataProvider->getRawData($endpoint, $parameters)
-                : $this->dataProvider->getResourceCollection($endpoint, $parameters);
+                ? $this->dataProvider->getRawData($urlPath, $parameters)
+                : $this->dataProvider->getResourceCollection($urlPath, $parameters);
         };
     }
 

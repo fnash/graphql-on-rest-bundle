@@ -71,7 +71,7 @@ class ListTypeResolverFactory
     {
         return [
             'type' => $this->createListTypeResolver($typeResolver),
-            'resolve' => $typeResolver->resolveTypeClosure($typeResolver->getEndpoint(), true),
+            'resolve' => $typeResolver->resolveTypeClosure($typeResolver->getUrlPath(), true),
             'args' => $typeResolver->getArgumentsConfig(),
         ];
     }

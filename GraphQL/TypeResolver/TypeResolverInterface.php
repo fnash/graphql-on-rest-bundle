@@ -26,7 +26,7 @@ interface TypeResolverInterface
      *
      * @return string
      */
-    public function getEndpoint(): string;
+    public function getUrlPath(): string;
 
     /**
      * @return array
